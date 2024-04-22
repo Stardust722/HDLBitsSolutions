@@ -1,0 +1,78 @@
+1. Step One
+
+assign one = 1;
+
+2. Output Zero
+
+module top_module(
+    output zero
+);// Module body starts after semicolon
+
+3. Wire
+
+module top_module( input in, output out );
+	assign out = in;
+endmodule
+
+4. Wire4
+
+module top_module( 
+    input a,b,c,
+    output w,x,y,z );
+	assign w = a;
+    	assign x = b;
+    	assign y = b;
+    	assign z = c;
+	// if we are certain about the width of each signal
+	//using assign {w,x,y,z} = {a,b,b,c};
+endmodule
+
+5. Inverter
+
+module top_module( input in, output out );
+	assign out = ~in;
+endmodule
+
+6-8. AND, NOR, XNOR
+
+module top_module( 
+    input a, 
+    input b, 
+    output out );
+	assign out = a & b;//using bitwise-AND
+	// assign out = ~(a | b); NOR
+	// assign out = ~(a^b); XNOR
+		// I use a==b,but logical,not bitwise.
+endmodule
+
+9. Declaring Wires
+
+`default_nettype none
+module top_module(
+    input a,
+    input b,
+    input c,
+    input d,
+    output out,
+    output out_n   ); 
+	wire w1, w2;
+    assign w1 = a & b;
+    assign w2 = c & d;
+    assign out = w1 | w2;
+    assign out_n = ~out;
+endmodule
+// Wire is a truly signal more than a "middle parameter"
+
+10. 7458 
+
+module top_module ( 
+    input p1a, p1b, p1c, p1d, p1e, p1f,
+    output p1y,
+    input p2a, p2b, p2c, p2d,
+    output p2y );
+    assign p1y = (p1a & p1b & p1c) |(p1d & p1e & p1f);
+    assign p2y = (p2a & p2b) |(p2c & p2d);
+endmodule
+
+
+
