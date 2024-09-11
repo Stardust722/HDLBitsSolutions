@@ -1,0 +1,113 @@
+1.
+module top_module ( input a, input b, output out );
+    mod_a ma(a,b,out);
+endmodule
+模块类型，模块名称，模块接口，把接口直接用线连接了。
+2.
+module top_module ( 
+    input a, 
+    input b, 
+    input c,
+    input d,
+    output out1,
+    output out2
+);
+    mod_a ma(out1,out2,a,b,c,d);
+endmodule
+严格按小模块给出的接口顺序来匹配接口。
+3.
+module top_module ( 
+    input a, 
+    input b, 
+    input c,
+    input d,
+    output out1,
+    output out2
+);
+    mod_a ma(.in1(a),.in2(b),.in3(c),.in4(d),.out1(out1),.out2(out2));
+endmodule
+直接指定信号源和接口进行匹配，.接口名（信号源名），可乱序写。
+4.
+module top_module ( input clk, input d, output q );
+    wire w[2];
+    my_dff d1(clk,d,w[0]);
+    my_dff d2(clk,w[0],w[1]);
+    my_dff d3(clk,w[1],q);
+endmodule
+5.
+module top_module ( 
+    input clk, 
+    input [7:0] d, 
+    input [1:0] sel, 
+    output [7:0] q 
+);
+    wire[7:0] a[3:1];
+    my_dff8 m1(clk,d,a[1]);
+    my_dff8 m2(clk,a[1],a[2]);
+    my_dff8 m3(clk,a[2],a[3]);
+    always@(*)
+        begin
+            case(sel)
+                2'd0: q <= d;
+                2'd1: q <= a[1];
+                2'd2: q <= a[2];
+                2'd3: q <= a[3];
+            endcase
+        end
+    endmodule
+6.
+module top_module(
+    input [31:0] a,
+    input [31:0] b,
+    output [31:0] sum
+);
+    wire incre[2];
+    add16 low(a[15:0],b[15:0],0,sum[15:0],incre[0]);
+    add16 high(a[31:16],b[31:16],incre[0],sum[31:16],incre[1]);
+endmodule
+加法器。
+7.
+module top_module (
+    input [31:0] a,
+    input [31:0] b,
+    output [31:0] sum
+);//
+	wire incre[2];
+    add16 low(a[15:0],b[15:0],0,sum[15:0],incre[0]);
+    add16 high(a[31:16],b[31:16],incre[0],sum[31:16],incre[1]);
+endmodule
+
+module add1 ( input a, input b, input cin,   output sum, output cout );
+
+// Full adder module here
+    assign sum = ((a ^ b) ^ cin);
+    assign cout = cin?(a|b):(a&b);
+endmodule
+多层模块架构。 
+8.
+module top_module(
+    input [31:0] a,
+    input [31:0] b,
+    output [31:0] sum
+);
+    wire incre[3];
+    wire[15:0] temp[1:0];
+    add16 low(a[15:0],b[15:0],0,sum[15:0],incre[0]);
+    add16 high0(a[31:16],b[31:16],0,temp[0],incre[1]);
+    add16 high1(a[31:16],b[31:16],1,temp[1],incre[2]);
+    assign sum[31:16] = incre[0]?temp[1]:temp[0];
+endmodule
+9.
+module top_module(
+    input [31:0] a,
+    input [31:0] b,
+    input sub,
+    output [31:0] sum
+);
+	wire incre[2];
+    wire [32:0] b_sub;
+    assign b_sub = b ^ {32{sub}};
+    add16 low(a[15:0],b_sub[15:0],sub,sum[15:0],incre[0]);
+    add16 high(a[31:16],b_sub[31:16],incre[0],sum[31:16],incre[1]);
+endmodule
+模块应用+字符串复制feature
